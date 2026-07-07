@@ -3,6 +3,7 @@
 #endif
 #include <Windows.h>
 #include <iostream>
+#include <vector>
 #include "Inventory.h"
 #include "Date.h"
 #include "Exception.h"
@@ -18,7 +19,8 @@ int main()
 	Inventory Stock;
 	StockItem item;
 	int quantite, id, jour, mois, annes, choix;
-	bool ScanNom = true, ScanPrix = true, ScanQuantite = true, ScanId = true, ScanJour = true, ScanMois = true, Scananne = true;
+	vector <Inventory> tab;
+	bool ScanNom = true, ScanPrix = true, scannPrix = true,ScanQuantite = true, ScanId = true, ScanJour = true, ScanMois = true, Scananne = true;
 	string nomProduit;
 	double UnitPrice;
 	while (true) {
@@ -34,19 +36,14 @@ int main()
 			cout << '\t' << "5) Mise a jour stock" << endl;
 			cout << '\t' << "6) Mise a jour fichier" << endl;
 			cout << '\t' << "7) Quitter" << endl;
-
 			cout << "===========================================" << endl;
 			cout << '\t' << "Choix : ";
 			if (!(cin >> choix)) {
 				throw Exception("Entrer un nombre entier!");
-				cin.clear();
-				cin.ignore(numeric_limits<streamsize>::max(), '\n');
 				continue;
 			}
 			if (choix < 1 || choix > 7) {
 				throw Exception("Entrer une seul choix compris entre 1 et 7!");
-				cin.clear();
-				cin.ignore(numeric_limits<streamsize>::max(), '\n');
 				continue;
 			}
 			if (choix == 7) {
@@ -64,20 +61,17 @@ int main()
 		}
 		switch (choix) {
 		case 1:
+			tab.push_back(move(Stock));
 			ScanId = true;
 			while (ScanId) {
 				try {
 					cout << "Entrer l'ID de cette Produit :";
 					if (!(cin >> id)) {
 						throw Exception("Entrer un Nombre!");
-						cin.clear();
-						cin.ignore(numeric_limits<streamsize>::max(), '\n');
 					
 					}
 					if (cin.peek() == '.') {
 						throw Exception("Entrer un nombre entier!");
-						cin.clear();
-						cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
 					}
 					item.setId(id);
@@ -99,13 +93,9 @@ int main()
 					cout << "Entrer le jour de cette Produit :";
 					if (!(cin >> jour)) {
 						throw Exception("Entrer un Nombre!");
-						cin.clear();
-						cin.ignore(numeric_limits<streamsize>::max(), '\n');
 					}
 					if (cin.peek() == '.') {
 						throw Exception("Entrer un nombre qui no caractéristique par virgule!");
-						cin.clear();
-						cin.ignore(numeric_limits<streamsize>::max(), '\n');
 					}
 					item.setDay(jour);
 					ScanJour = false;
@@ -125,13 +115,9 @@ int main()
 					cout << "Entrer le mois de cette Produit :";
 					if (!(cin >> mois)) {
 						throw Exception("Entrer un Nombre!");
-						cin.clear();
-						cin.ignore(numeric_limits<streamsize>::max(), '\n');
 					}
 					if (cin.peek() == '.') {
 						throw Exception("Entrer un nombre qui no caractéristique par virgule!");
-						cin.clear();
-						cin.ignore(numeric_limits<streamsize>::max(), '\n');
 					}
 					item.setMonth(mois);
 					ScanMois = false;
@@ -152,13 +138,11 @@ int main()
 					cout << "Entrer l'année de cette Produit :";
 					if (!(cin >> annes)) {
 						throw Exception("Entrer un Nombre!");
-						cin.clear();
-						cin.ignore(numeric_limits<streamsize>::max(), '\n');
+					
 					}
 					if (cin.peek() == '.') {
 						throw Exception("Entrer un nombre qui no caractéristique par virgule!");
-						cin.clear();
-						cin.ignore(numeric_limits<streamsize>::max(), '\n');
+					
 					}
 					item.setYear(annes);
 					Scananne = false;
@@ -167,7 +151,7 @@ int main()
 					cout << RED << e.what() << RESET << YELLOW << endl;
 					cin.clear();
 					cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
+					continue;
 
 
 				}
@@ -185,8 +169,6 @@ int main()
 						cin >> quantite;
 						if (cin.peek() == '.') {
 							throw Exception("Entrer un nombre qui no caractéristique par virgule!");
-							cin.clear();
-							cin.ignore(numeric_limits<streamsize>::max(), '\n');
 						}
 						item.setQuantite(quantite);
 						ScanQuantite = false;
@@ -199,26 +181,58 @@ int main()
 					}
 				}
 				cout << endl;
-				cout << "Entrer le Prix de cette Produit :";
-				cin >> UnitPrice;
-				item.setunite(UnitPrice);
-				cout << endl;
-				break;
+				scannPrix = true;
+				while (scannPrix) {
+					try {
+						cout << "Entrer le Prix de cette Produit :";
+						if (!(cin >> UnitPrice)) {
+							throw Exception("Entrer un Nombre!");
+						}
+						item.setunite(UnitPrice);
+						scannPrix = false;
+						cout << endl;
 
-			
+					}
+					catch (const Exception& e) {
+						cout << RED << e.what() << RESET << YELLOW << endl;
+						cin.clear();
+						cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+					}
+				}
 				break;
-		case 2:
-			cout << GREEN;
-			Stock.addItem(make_unique<StockItem>(jour, mois, annes, quantite, id, nomProduit, UnitPrice));
-			Stock.calculateTotalInventoryValue();
+		
+		case 2: {
+			try {
+				if (tab.empty()) {
+					throw Exception("tu doits click sur le choix 1 pour Ajouter les Produits!");
+
+
+				}
+				cout << GREEN;
+				auto& currentStock = tab.back();
+				currentStock.addItem(make_unique<StockItem>(jour, mois, annes, quantite, id, nomProduit, UnitPrice));
+				currentStock.calculateTotalInventoryValue();
+			}
+			catch (const Exception& e) {
+				cout << RED << e.what() << RESET << YELLOW << endl;
+				cin.clear();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+			}
 			break;
+
+
+
+
+		}
 		case 3:
 			cout << GREEN;
 			Stock.FichierTXT();
 			break;
 		case 4:
 			cout << GREEN;
-			Stock.displayAll();
+			tab.back().displayAll();
 			cout << "Les informations sont Ajoutées avec succès";
 			cout << endl;
 			break;
