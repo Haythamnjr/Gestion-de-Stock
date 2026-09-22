@@ -5,6 +5,7 @@
 #include "Date.h"
 using namespace std;
 
+
 class StockItem:public Date {
 private:
 	
@@ -24,7 +25,8 @@ public:
 	void setunite(double unit);
 	virtual double calculateTotalValue()const;
 	virtual double updateCalculeValue()const;
-	virtual void updateStock(string NomProduit,int newQuantity, double newPrice);
+	virtual void updateStock(string NomProduit, int newQuantity, double newPrice);
+	bool DataStock()const;
 	virtual string Afficher()const;
 
 
