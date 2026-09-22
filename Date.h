@@ -1,9 +1,28 @@
 #ifndef DATE_H
 #define DATE_H
-#include<iostream>
+#include <iostream>
+#include <memory>
+#include <mysql/jdbc.h>
 using namespace std;
 
-class Date {
+
+class DataBase {
+protected:
+	unique_ptr<sql::Connection>data;
+	std::string Host = "localhost";
+	std::string User = "root";
+	std::string Password = "";
+public:
+	DataBase();
+	virtual ~DataBase() = default;
+
+};
+
+/*
+cette Classe qui Representer la Date de Entrer de Stock qui caracteriser par 
+
+*/
+class Date:public DataBase {
 
 private:
 
