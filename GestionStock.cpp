@@ -16,15 +16,19 @@ int main()
 {
 	SetConsoleOutputCP(CP_UTF8);
 	SetConsoleCP(CP_UTF8);
+	//les classe Principle
 	Inventory Stock;
 	StockItem item;
-	int quantite, id, jour, mois, annes, choix;
+	// Stockage historique des inventaires pour éviter la perte de données
 	vector <Inventory> tab;
+	//// Données temporaires pour la saisie utilisateur
+	int quantite, id, jour, mois, annes, choix;
 	bool ScanNom = true, ScanPrix = true, scannPrix = true,ScanQuantite = true, ScanId = true, ScanJour = true, ScanMois = true, Scananne = true;
 	string nomProduit;
 	double UnitPrice;
 	while (true) {
 		try {
+		// la menu de cette Programme
 			cout << YELLOW;
 			cout << "===========================================" << endl;
 			cout << "||        GESTION DE STOCK           ||" << endl;
@@ -38,6 +42,7 @@ int main()
 			cout << '\t' << "7) Quitter" << endl;
 			cout << "===========================================" << endl;
 			cout << '\t' << "Choix : ";
+			//// Validation des entrées utilisateur pour garantir l'intégrité des données
 			if (!(cin >> choix)) {
 				throw Exception("Entrer un nombre entier!");
 				continue;
@@ -46,9 +51,10 @@ int main()
 				throw Exception("Entrer une seul choix compris entre 1 et 7!");
 				continue;
 			}
+			//Pour choix 7 est quitter le programme
 			if (choix == 7) {
 				cout << RESET << GREEN;
-				cout << "Fin";
+				cout << "Fin" << endl;
 				cout << RESET;
 				break;
 			}
@@ -61,6 +67,7 @@ int main()
 		}
 		switch (choix) {
 		case 1:
+			//Transférer des informations d'une classe Inventory à tab
 			tab.push_back(move(Stock));
 			ScanId = true;
 			while (ScanId) {
@@ -202,17 +209,18 @@ int main()
 				}
 				break;
 		
-		case 2: {
+		case 2:
 			try {
 				if (tab.empty()) {
 					throw Exception("tu doits click sur le choix 1 pour Ajouter les Produits!");
 
-
 				}
 				cout << GREEN;
+				//Pour donnes les informations de tab vers currentStock sans détruire les informations
 				auto& currentStock = tab.back();
 				currentStock.addItem(make_unique<StockItem>(jour, mois, annes, quantite, id, nomProduit, UnitPrice));
 				currentStock.calculateTotalInventoryValue();
+				item.DataStock();
 			}
 			catch (const Exception& e) {
 				cout << RED << e.what() << RESET << YELLOW << endl;
@@ -224,8 +232,6 @@ int main()
 
 
 
-
-		}
 		case 3:
 			cout << GREEN;
 			Stock.FichierTXT();
@@ -233,8 +239,6 @@ int main()
 		case 4:
 			cout << GREEN;
 			tab.back().displayAll();
-			cout << "Les informations sont Ajoutées avec succès";
-			cout << endl;
 			break;
 		case 5:
 			cout << RESET << YELLOW;
@@ -249,10 +253,9 @@ int main()
 			cout << endl;
 			cout << "Entrer le prix de produit pour mise a jour :";
 			cin >> UnitPrice;
-			Stock.UpdateStocks(id, move(make_unique<StockItem>(jour, mois, annes, quantite, id, nomProduit, UnitPrice)));
-			Stock.UpdateCalculateInventoryValue();
-			cout << RESET << GREEN;
-			cout << "misa a jour est reussir";
+			item.updateStock(nomProduit, quantite, UnitPrice);
+			tab.back().UpdateStocks(id, move(make_unique<StockItem>(jour, mois, annes, quantite, id, nomProduit, UnitPrice)));
+			tab.back().UpdateCalculateInventoryValue();
 			break;
 
 		}
