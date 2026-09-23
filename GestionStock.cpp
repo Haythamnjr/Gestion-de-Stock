@@ -26,6 +26,7 @@ int main()
 	bool ScanNom = true, ScanPrix = true, scannPrix = true,ScanQuantite = true, ScanId = true, ScanJour = true, ScanMois = true, Scananne = true;
 	string nomProduit;
 	double UnitPrice;
+	tab.push_back(move(Stock));
 	while (true) {
 		try {
 		// la menu de cette Programme
@@ -68,7 +69,6 @@ int main()
 		switch (choix) {
 		case 1:
 			//Transférer des informations d'une classe Inventory à tab
-			tab.push_back(move(Stock));
 			ScanId = true;
 			while (ScanId) {
 				try {
